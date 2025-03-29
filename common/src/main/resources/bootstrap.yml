@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: common
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos  # 默认用户名
+        password: nacos  # 默认密码
+        namespace: public
+      config:
+        username: nacos  # 默认用户名
+        password: nacos  # 默认密码
+        file-extension: yaml
+        shared-configs:
+          - data-id: dataSource.yml
