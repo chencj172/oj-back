@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+
+oj:
+  swagger:
+    title: 用户服务接口文档
+    describe: 用户服务接口文档
+    package: com.chencj.user.controller
+file:
+  upload-avatar-dir: D:\Learn\Java\project\oj-front\user-avatar\ # 用户头像存放位置
+config:
+  jwt:
+    # 加密密钥
+    secret: jdandwdqdlqkhuhuwdkq
+    # token有效时长
+    expire: 3600
+logging:
+  level:
+    com.chencj.user: debug

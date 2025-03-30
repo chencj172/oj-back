@@ -1,0 +1,33 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos  # 默认用户名
+        password: nacos  # 默认密码
+        namespace: public
+      config:
+        import-check:
+          enabled: false
+config:
+  jwt:
+    # 加密密钥
+    secret: jdandwdqdlqkhuhuwdkq
+    # token有效时长
+    expire: 3600
+
+#  不进行拦截的路径
+auth:
+  excludePaths:
+    - /user/login
+    - /user/register
