@@ -10,6 +10,10 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+        - id: problem-service
+          uri: lb://problem-service
+          predicates:
+            - Path=/problem/**
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -31,3 +35,6 @@ auth:
   excludePaths:
     - /user/login
     - /user/register
+    - /problem/search
+    - /problem/getById/{id}
+    - /problem/judge

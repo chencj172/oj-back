@@ -1,0 +1,13 @@
+server:
+  port: 8083
+
+oj:
+  swagger:
+    title: 判题服务接口文档
+    describe: 判题服务接口文档
+    package: com.chencj.judge.controller
+logging:
+  level:
+    com.chencj.problem: debug
+
+

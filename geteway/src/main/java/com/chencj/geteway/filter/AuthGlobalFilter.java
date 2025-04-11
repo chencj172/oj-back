@@ -56,6 +56,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         try {
             userId = jwtTool.parseToken(token);
         } catch (UnauthorizedException e) {
+            // redis删除
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();

@@ -14,7 +14,7 @@ config:
     # 加密密钥
     secret: jdandwdqdlqkhuhuwdkq
     # token有效时长
-    expire: 3600
+    expire: 60 * 60 * 24 * 10
 logging:
   level:
     com.chencj.user: debug

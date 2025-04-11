@@ -7,9 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="user-service" />
+        <module name="problem-service" />
+        <module name="judge-service" />
         <module name="common" />
         <module name="geteway" />
-        <module name="user-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,7 +19,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="common" options="-parameters" />
       <module name="geteway" options="-parameters" />
+      <module name="judge-service" options="-parameters" />
       <module name="oj" options="" />
+      <module name="problem-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>

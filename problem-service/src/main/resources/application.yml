@@ -1,0 +1,20 @@
+server:
+  port: 8082
+
+oj:
+  swagger:
+    title: 题目服务接口文档
+    describe: 题目服务接口文档
+    package: com.chencj.problem.controller
+logging:
+  level:
+    com.chencj.problem: debug
+
+# pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
