@@ -5,6 +5,10 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.DelayQueue;
+
 /**
  * @ClassName: JudgeService
  * @Description:
@@ -18,6 +22,7 @@ public class JudgeService {
     private WebClient webClient;
 
     public String judgeProblem(String code) {
+        BlockingQueue<Integer> blockingQueue = new DelayQueue();
         return "";
     }
 }

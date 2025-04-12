@@ -8,6 +8,6 @@ oj:
     package: com.chencj.judge.controller
 logging:
   level:
-    com.chencj.problem: debug
+    com.chencj.judge: debug
 
 

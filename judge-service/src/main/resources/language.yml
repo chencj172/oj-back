@@ -1,0 +1,26 @@
+---
+language: C++
+src_path: main.cpp
+exe_path: main
+compile:
+  command: /usr/bin/g++ main.cpp -o main
+  env: PATH=/usr/bin:/bin
+  maxCpuTime: 10s
+  maxRealTime: 20s
+  maxMemory: 512mb
+run:
+  env: PATH=/usr/bin:/bin
+  command: main
+---
+language: Java
+src_path: Main.java
+exe_path: Main
+compile:
+  env: PATH=/usr/bin:/bin
+  command: /usr/bin/javac Main.java
+  maxCpuTime: 10s
+  maxRealTime: 20s
+  maxMemory: 512mb
+run:
+  env: PATH=/usr/bin:/bin
+  command: /usr/bin/java Main
