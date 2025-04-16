@@ -1,8 +1,8 @@
 package com.chencj.problem.controller;
 
 
+import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
-import com.chencj.problem.model.dto.ProblemCodeDto;
 import com.chencj.problem.service.ProblemService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +35,21 @@ public class ProblemController {
         return problemService.getProblemById(id);
     }
 
+    /**
+     * 运行测试用例
+     * @param problemCodeDto
+     * @return
+     */
+    @PostMapping("/testCase")
+    public Result<?> testCase(@RequestBody ProblemCodeDto problemCodeDto) {
+        return problemService.testCase(problemCodeDto);
+    }
+
+    /**
+     * 判题
+     * @param problemCodeDto
+     * @return
+     */
     @PostMapping("/judge")
     public Result<?> judgeProblem(@RequestBody ProblemCodeDto problemCodeDto) {
         return problemService.judge(problemCodeDto);

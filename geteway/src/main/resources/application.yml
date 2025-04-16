@@ -14,6 +14,10 @@ spring:
           uri: lb://problem-service
           predicates:
             - Path=/problem/**
+        - id: judge-service
+          uri: lb://judge-service
+          predicates:
+            - Path=/judge/**
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -38,3 +42,4 @@ auth:
     - /problem/search
     - /problem/getById/{id}
     - /problem/judge
+    - /problem/testCase

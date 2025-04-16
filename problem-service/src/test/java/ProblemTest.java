@@ -30,8 +30,11 @@ public class ProblemTest {
         problem.setLevel(1);
         problem.setCaseInput("3 4");
         problem.setCaseOutput("7");
-        problem.setAnswerInput("0 0\n1 2\n100 100\n555 5");
-        problem.setAnswerOutput("0\n3\n200\n560");
+        problem.setAnswerInput("0 0\n\n1 2\n\n100 100\n\n555 5");
+        problem.setAnswerOutput("0\n\n3\n\n200\n\n560");
+        problem.setTimeLimit(1000);
+        problem.setMemoryLimit(64);
+        problem.setStackLimit(16);
         problem.setContent("" +
                 "## 输入两个整数，求这两个整数的和是多少\n" +
                 "\n" +
@@ -63,20 +66,22 @@ public class ProblemTest {
                 "7\n" +
                 "```");
 
-        // for (int i = 0; i < 200; i++) {
+        // for (int i = 0; i < 50; i++) {
         //     problemService.save(problem);
         //     problem.setId(null);
         // }
         // problemService.updateById(problem);
         problemService.lambdaUpdate()
                 .set(Problem::getContent, problem.getContent())
+                .set(Problem::getAnswerInput, problem.getAnswerInput())
+                .set(Problem::getAnswerOutput, problem.getAnswerOutput())
                 .update();
 
     }
 
     @Test
     public void getProblem() {
-        Problem problem = problemService.getById(1);
+        Problem problem = problemService.getById(222);
         System.out.println(problem);
     }
 

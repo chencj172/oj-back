@@ -1,8 +1,8 @@
 package com.chencj.problem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
-import com.chencj.problem.model.dto.ProblemCodeDto;
 import com.chencj.problem.model.po.Problem;
 
 /**
@@ -17,6 +17,7 @@ public interface ProblemService extends IService<Problem> {
 
     Result<?> getProblemById(Integer id);
 
-    Result<?> judge(ProblemCodeDto problemCodeDto);
+    Result<?> judge(ProblemCodeDto testCaseCodeDto);
 
+    Result<?> testCase(ProblemCodeDto testCaseCodeDto);
 }

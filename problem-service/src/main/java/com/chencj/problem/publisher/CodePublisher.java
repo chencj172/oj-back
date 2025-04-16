@@ -19,8 +19,12 @@ public class CodePublisher {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    public void publishCodeToQueue(String code) {
-        rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.CODE_ROUTING_KEY, code);
+    public void publishJudgeCodeToQueue(String msg) {
+        rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.CODE_ROUTING_KEY, msg);
+    }
+
+    public void publishTestCodeToQueue(String msg) {
+        rabbitTemplate.convertAndSend(RabbitMQConstant.TESTCASE_CODE_EXCHANGE, RabbitMQConstant.TESTCASE_CODE_ROUTING_KEY, msg);
     }
 
 }

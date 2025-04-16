@@ -1,7 +1,5 @@
-import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import com.alibaba.nacos.shaded.com.google.common.base.Splitter;
 import com.chencj.judge.JudgeApplication;
 import com.chencj.judge.model.LanguageConfig;
 import com.chencj.judge.utils.LanguageConfigLoader;
@@ -39,7 +37,7 @@ public class JudgeTest {
         LanguageConfigLoader languageConfigLoader = new LanguageConfigLoader();
         LanguageConfig languageConfig = languageConfigLoader.getLanguageConfigByName("C++");
 
-        SandboxRun.compile(
+        JSONArray compile = SandboxRun.compile(
                 languageConfig.getSrcName(),
                 languageConfig.getExeName(),
                 LanguageConfigLoader.splitBySpace(languageConfig.getCompileCommand()),
@@ -50,6 +48,27 @@ public class JudgeTest {
                 10L,
                 languageConfig.getMaxRealTime() * 1000,
                 "#include <iostream>\nusing namespace std;\nint main() {\nint a, b;\ncin >> a >> b;\ncout << a + b << endl;\n}");
+
+        JSONObject retJson = (JSONObject) compile.get(0);
+        // 拿到临时文件ID
+        JSONObject fileIds = (JSONObject) retJson.get("fileIds");
+        String fileId = fileIds.getStr("main");
+
+        // 运行
+        JSONArray run = SandboxRun.run(
+                languageConfig.getExeName(),
+                fileId,
+                LanguageConfigLoader.splitBySpace(languageConfig.getRunCommand()),
+                LanguageConfigLoader.splitBySpace(languageConfig.getRunEnv()),
+                "1 1",
+                languageConfig.getMaxCpuTime() * 1000,
+                languageConfig.getMaxMemory(),
+                256 * 1024 * 1024L,
+                10L,
+                languageConfig.getMaxRealTime() * 1000);
+
+        // 删除临时文件
+        SandboxRun.desFile(fileId);
     }
 
     @Test

@@ -62,5 +62,20 @@ public class Problem implements Serializable {
      */
     private String caseOutput;
 
+    /**
+     * 题目的时间限制 ms
+     */
+    private Integer timeLimit;
+
+    /**
+     * 题目的空间限制 mb
+     */
+    private Integer memoryLimit;
+
+    /**
+     * 题目的栈空间限制 mb
+     */
+    private Integer stackLimit;
+
     private static final long serialVersionUID = 1L;
 }

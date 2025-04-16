@@ -5,9 +5,10 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chencj.common.constant.RedisConstant;
+import com.chencj.common.constant.StringConstant;
+import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
 import com.chencj.problem.mapper.ProblemMapper;
-import com.chencj.problem.model.dto.ProblemCodeDto;
 import com.chencj.problem.model.po.Problem;
 import com.chencj.problem.model.vo.ProblemVo;
 import com.chencj.problem.publisher.CodePublisher;
@@ -62,7 +63,19 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
     @Override
     public Result<?> judge(ProblemCodeDto problemCodeDto) {
         // 把信息传到消息队列中
-        codePublisher.publishCodeToQueue(problemCodeDto.getCode());
+        codePublisher.publishJudgeCodeToQueue(problemCodeDto.getCode());
+        return Result.ok();
+    }
+
+    @Override
+    public Result<?> testCase(ProblemCodeDto problemCodeDto) {
+        // 在Redis中生成该题目对应的测试结果
+        String Key = RedisConstant.PROBLEM_TESTCASE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
+
+        stringRedisTemplate.opsForHash().put(Key, "status", StringConstant.TESTCASE_STATUS_PADDING);
+
+        // 将评测用例相关信息放到消息队列中
+        codePublisher.publishTestCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
         return Result.ok();
     }
 
