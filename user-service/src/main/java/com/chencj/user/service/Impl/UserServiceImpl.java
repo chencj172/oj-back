@@ -3,9 +3,11 @@ package com.chencj.user.service.Impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chencj.common.constant.RedisConstant;
+import com.chencj.common.exception.UnauthorizedException;
 import com.chencj.common.utils.Result;
 import com.chencj.common.utils.UserContext;
 import com.chencj.user.mapper.UserMapper;
@@ -16,6 +18,7 @@ import com.chencj.user.service.UserService;
 import com.chencj.user.utils.JwtTool;
 import com.chencj.user.utils.UserConstant;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @Version: 1.0
  */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Resource
@@ -114,5 +118,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         return Result.ok(userVo);
+    }
+
+    @Override
+    public Result<?> checkLogin(String token) {
+        Integer res = null;
+        try {
+            res = jwtTool.parseToken(token);
+        } catch (UnauthorizedException e) {
+            log.error("error token {}", e.getMessage());
+        }
+
+        if(res == null) {
+            return Result.error(401, "token失效");
+        }
+        return Result.ok();
     }
 }

@@ -39,7 +39,7 @@ auth:
   excludePaths:
     - /user/login
     - /user/register
+    - /user/checkLogin
     - /problem/search
     - /problem/getById/{id}
-    - /problem/judge
-    - /problem/testCase
+

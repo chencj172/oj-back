@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -47,6 +48,8 @@ public class JudgeService {
     public void testProblemCase(ProblemCodeDto problemCodeDto) {
         // 用于更新测试用例的结果
         String Key = RedisConstant.PROBLEM_TESTCASE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
+        // 如果之前有遗留的清除一下
+        stringRedisTemplate.delete(Key);
         // 先进行编译
         LanguageConfig languageConfig = languageConfigLoader.getLanguageConfigByName(problemCodeDto.getLanguage());
         JSONArray compile = Compile.compileCode(languageConfig, problemCodeDto.getCode());
@@ -65,8 +68,10 @@ public class JudgeService {
         // 编译成功进行判题
         JSONObject fileIds = (JSONObject) compileResult.get("fileIds");
         String fileId = fileIds.getStr(languageConfig.getExeName());
-        Map<String, String> runResult = JudgeRun.runCode(languageConfig, fileId, problemCodeDto);
+        Map<String, String> runResult = JudgeRun.testCase(languageConfig, fileId, problemCodeDto);
         stringRedisTemplate.opsForHash().putAll(Key, runResult);
+        // 过期时间设置为1分钟
+        stringRedisTemplate.expire(Key, 1, TimeUnit.MINUTES);
 
         // 删除临时文件，防止内存泄漏
         SandboxRun.desFile(fileId);

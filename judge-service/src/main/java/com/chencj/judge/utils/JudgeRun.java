@@ -12,12 +12,67 @@ import java.util.*;
 
 /**
  * @ClassName: JuderRun
- * @Description: 调用SandBoxRun沙箱运行代码，比对测试结果或者判题结果
+ * @Description: 调用SandBoxRun沙箱运行代码，用于测试样例
  * @Author: chencj
  * @Datetime: 2025/4/14 19:40
  * @Version: 1.0
  */
 public class JudgeRun {
+    /**
+     * 评测用例，如果状态是Accepted直接返回结果就好，否则返回错误信息
+     *
+     * @param languageConfig
+     * @param fileId
+     * @param problemCodeDto
+     * @return
+     */
+    public static Map<String, String> testCase(
+            LanguageConfig languageConfig,
+            String fileId,
+            ProblemCodeDto problemCodeDto) {
+        Map<String, String> ret = new HashMap<>();
+        if (languageConfig.getLanguage() == null
+                || (!languageConfig.getLanguage().equals("c") && !languageConfig.getLanguage().equals("C++"))) {
+            problemCodeDto.setTimeLimit(problemCodeDto.getTimeLimit() * 2);
+            problemCodeDto.setMemoryLimit(problemCodeDto.getMemoryLimit() * 2);
+            problemCodeDto.setStackLimit(problemCodeDto.getStackLimit() * 2);
+        }
+
+        // 调用沙箱运行代码获取运行结果
+        JSONArray run = SandboxRun.run(
+                languageConfig.getExeName(),
+                fileId,
+                LanguageConfigLoader.splitBySpace(languageConfig.getRunCommand()),
+                LanguageConfigLoader.splitBySpace(languageConfig.getRunEnv()),
+                problemCodeDto.getInput(),
+                (long) problemCodeDto.getTimeLimit() * 1000,
+                (long) (problemCodeDto.getMemoryLimit() * 1024 * 1024),
+                (long) (problemCodeDto.getStackLimit() * 1000),
+                10L,
+                languageConfig.getMaxRealTime() * 1000);
+        JSONObject runObj = (JSONObject) run.get(0);
+        String runStatus = runObj.getStr("status");
+        JSONObject filesObj = (JSONObject) runObj.get("files");
+        ret.put("status", runStatus);
+        if (!StringConstant.ACCEPTED.equals(runStatus)) {
+            // 运行出错将错误信息填写进去然后直接返回
+            ret.put("runError", filesObj.getStr("stderr"));
+            return ret;
+        }
+
+        // 走到这说明测试完成了
+        ret.put("status", StringConstant.FINISHED);
+        ret.put("testCaseResult", filesObj.getStr("stdout"));
+        return ret;
+    }
+
+    /**
+     * 判题
+     * @param languageConfig
+     * @param fileId
+     * @param problemCodeDto
+     * @return
+     */
     public static Map<String, String> runCode(
             LanguageConfig languageConfig,
             String fileId,
@@ -27,7 +82,7 @@ public class JudgeRun {
         List<String> inputList = splitByDoubleNewline(problemCodeDto.getInput());
         List<String> outputList = splitByDoubleNewline(problemCodeDto.getOutput());
 
-        if(languageConfig.getLanguage() == null
+        if (languageConfig.getLanguage() == null
                 || (!languageConfig.getLanguage().equals("c") && !languageConfig.getLanguage().equals("C++"))) {
             problemCodeDto.setTimeLimit(problemCodeDto.getTimeLimit() * 2);
             problemCodeDto.setMemoryLimit(problemCodeDto.getMemoryLimit() * 2);
@@ -64,7 +119,7 @@ public class JudgeRun {
                 String runResult = filesObj.getStr("stdout");
                 if (StrUtil.isBlank(runResult) || !OJComparator.compareOutput(runResult, outputStr)) {
                     // 判题错误的样例、错误的结果、正确的结果放到Map里
-                    ret.put("result", "Worry Answer");
+                    ret.put("result", "WorryAnswer");
                     ret.put("errorInput", inputStr);
                     ret.put("errorOutput", runResult);
                     ret.put("correctOutput", outputStr);

@@ -3,6 +3,7 @@ package com.chencj.problem.controller;
 
 import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
+import com.chencj.common.utils.UserContext;
 import com.chencj.problem.service.ProblemService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,7 @@ public class ProblemController {
      */
     @PostMapping("/testCase")
     public Result<?> testCase(@RequestBody ProblemCodeDto problemCodeDto) {
+        problemCodeDto.setUid(UserContext.getUser());
         return problemService.testCase(problemCodeDto);
     }
 
@@ -52,6 +54,7 @@ public class ProblemController {
      */
     @PostMapping("/judge")
     public Result<?> judgeProblem(@RequestBody ProblemCodeDto problemCodeDto) {
+        problemCodeDto.setUid(UserContext.getUser());
         return problemService.judge(problemCodeDto);
     }
 }

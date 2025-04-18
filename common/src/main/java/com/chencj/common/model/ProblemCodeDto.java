@@ -20,10 +20,12 @@ public class ProblemCodeDto {
      * 用户Id
      */
     private Integer uid;
+
     /**
      * 题目Id
      */
     private Integer pid;
+
     /**
      * 测试样例/答案输入
      */
@@ -32,8 +34,8 @@ public class ProblemCodeDto {
     /**
      * 测试样例/答案输出
      */
-
     private String output;
+
     /**
      * 提交的代码
      */

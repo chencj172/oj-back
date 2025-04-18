@@ -4,8 +4,10 @@ import com.chencj.judge.JudgeApplication;
 import com.chencj.judge.model.LanguageConfig;
 import com.chencj.judge.utils.LanguageConfigLoader;
 import com.chencj.judge.utils.SandboxRun;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.List;
 
@@ -71,9 +73,13 @@ public class JudgeTest {
         SandboxRun.desFile(fileId);
     }
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     @Test
     public void testDesFile() {
-        SandboxRun.desFile("11212121");
+        stringRedisTemplate.delete("q1");
+        // SandboxRun.desFile("11212121");
+
     }
 
 }
