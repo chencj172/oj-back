@@ -24,7 +24,7 @@ public class CodePublisher {
     }
 
     public void publishTestCodeToQueue(String msg) {
-        rabbitTemplate.convertAndSend(RabbitMQConstant.TESTCASE_CODE_EXCHANGE, RabbitMQConstant.TESTCASE_CODE_ROUTING_KEY, msg);
+        rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.TESTCASE_CODE_ROUTING_KEY, msg);
     }
 
 }

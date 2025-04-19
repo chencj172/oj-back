@@ -1,9 +1,11 @@
 package com.chencj.judge;
 
 
+import com.chencj.api.client.ProblemClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * @ClassName: JudgeApplication
@@ -14,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan("com.chencj.judge.mapper")
+@EnableFeignClients(clients = { ProblemClient.class })
 public class JudgeApplication {
     public static void main(String[] args) {
         SpringApplication.run(JudgeApplication.class, args);

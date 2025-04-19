@@ -27,6 +27,7 @@
         <module>geteway</module>
         <module>problem-service</module>
         <module>judge-service</module>
+        <module>api</module>
     </modules>
     <scm>
         <connection/>

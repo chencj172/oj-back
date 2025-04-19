@@ -62,8 +62,13 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
 
     @Override
     public Result<?> judge(ProblemCodeDto problemCodeDto) {
+        // 生成一条记录评测转态的数据放到Redis里，待判题结束将判题结果返回给用户并且存到数据库中，并且查看是否要更新Redis
+        String Key = RedisConstant.PROBLEM_JUDGE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
+        // 如果之前有遗留的清除一下
+        stringRedisTemplate.delete(Key);
+        stringRedisTemplate.opsForHash().put(Key, "status", StringConstant.TESTCASE_STATUS_PADDING);
         // 把信息传到消息队列中
-        codePublisher.publishJudgeCodeToQueue(problemCodeDto.getCode());
+        codePublisher.publishJudgeCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
         return Result.ok();
     }
 
@@ -71,7 +76,8 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
     public Result<?> testCase(ProblemCodeDto problemCodeDto) {
         // 在Redis中生成该题目对应的测试结果
         String Key = RedisConstant.PROBLEM_TESTCASE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
-
+        // 如果之前有遗留的清除一下
+        stringRedisTemplate.delete(Key);
         stringRedisTemplate.opsForHash().put(Key, "status", StringConstant.TESTCASE_STATUS_PADDING);
 
         // 将评测用例相关信息放到消息队列中

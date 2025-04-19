@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,6 +81,13 @@ public class JudgeTest {
         stringRedisTemplate.delete("q1");
         // SandboxRun.desFile("11212121");
 
+    }
+
+    @Test
+    public void testRedisList() {
+        stringRedisTemplate.opsForList().leftPushAll("test", List.of("1", "2", "3"));
+        List<String> range = stringRedisTemplate.opsForList().range("test", 0, -1);
+        System.out.println(range);
     }
 
 }

@@ -4,9 +4,11 @@ package com.chencj.judge.utils;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import com.chencj.api.model.po.JudgeRecord;
 import com.chencj.common.constant.StringConstant;
 import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.judge.model.LanguageConfig;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
@@ -17,6 +19,7 @@ import java.util.*;
  * @Datetime: 2025/4/14 19:40
  * @Version: 1.0
  */
+@Slf4j
 public class JudgeRun {
     /**
      * 评测用例，如果状态是Accepted直接返回结果就好，否则返回错误信息
@@ -61,8 +64,11 @@ public class JudgeRun {
         }
 
         // 走到这说明测试完成了
-        ret.put("status", StringConstant.FINISHED);
+        long runTime = Long.parseLong(runObj.getStr("runTime"));
+        runTime /= 1000000;
+        ret.put("runStatus", StringConstant.FINISHED);
         ret.put("testCaseResult", filesObj.getStr("stdout"));
+        ret.put("runTime", Long.toString(runTime));
         return ret;
     }
 
@@ -73,11 +79,11 @@ public class JudgeRun {
      * @param problemCodeDto
      * @return
      */
-    public static Map<String, String> runCode(
+    public static void runCode(
             LanguageConfig languageConfig,
             String fileId,
-            ProblemCodeDto problemCodeDto) {
-        Map<String, String> ret = new HashMap<>();
+            ProblemCodeDto problemCodeDto,
+            JudgeRecord judgeRecord) {
         // 运行每一个输入，然后比较对应的输出
         List<String> inputList = splitByDoubleNewline(problemCodeDto.getInput());
         List<String> outputList = splitByDoubleNewline(problemCodeDto.getOutput());
@@ -89,6 +95,7 @@ public class JudgeRun {
             problemCodeDto.setStackLimit(problemCodeDto.getStackLimit() * 2);
         }
 
+        long maxRunTime = 0;
         for (int i = 0; i < inputList.size(); i++) {
             String inputStr = inputList.get(i);
             String outputStr = outputList.get(i);
@@ -106,30 +113,29 @@ public class JudgeRun {
                     languageConfig.getMaxRealTime() * 1000);
             JSONObject runObj = (JSONObject) run.get(0);
             String runStatus = runObj.getStr("status");
-            ret.put("status", runStatus);
+            maxRunTime = Math.max(maxRunTime, Long.parseLong(runObj.getStr("runTime")) / 1000000);
             if (!StringConstant.ACCEPTED.equals(runStatus)) {
-                // 判题错误的样例、错误的结果、正确的结果放到Map里
-                ret.put("result", runStatus);
-                ret.put("errorInput", inputStr);
-                ret.put("correctOutput", outputStr);
-                return ret;
+                // 运行出错
+                judgeRecord.setJudgeResult(runStatus);
+                return ;
             } else {
                 // 获取输出结果
                 JSONObject filesObj = (JSONObject) runObj.get("files");
                 String runResult = filesObj.getStr("stdout");
                 if (StrUtil.isBlank(runResult) || !OJComparator.compareOutput(runResult, outputStr)) {
-                    // 判题错误的样例、错误的结果、正确的结果放到Map里
-                    ret.put("result", "WorryAnswer");
-                    ret.put("errorInput", inputStr);
-                    ret.put("errorOutput", runResult);
-                    ret.put("correctOutput", outputStr);
-                    return ret;
+                    // WA
+                    judgeRecord.setErrorInput(inputStr);
+                    judgeRecord.setErrorOutput(runResult);
+                    judgeRecord.setJudgeResult(StringConstant.WA);
+                    judgeRecord.setRunTime((int) maxRunTime);
+                    return ;
                 }
             }
         }
 
-        ret.put("result", StringConstant.ACCEPTED);
-        return ret;
+        // AC
+        judgeRecord.setRunTime((int) maxRunTime);
+        judgeRecord.setJudgeResult(StringConstant.ACCEPTED);
     }
 
     /**

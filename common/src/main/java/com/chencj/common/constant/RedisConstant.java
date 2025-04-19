@@ -15,4 +15,7 @@ public class RedisConstant {
     // 题目相关
     public final static String PROBLEM_INFO_DETAIL = "problem:info:";
     public final static String PROBLEM_TESTCASE = "problem:testcase:";
+    public final static String PROBLEM_JUDGE = "problem:judge:";
+    public final static String PROBLEM_JUDGE_DETAIL = "problem:judge:detail:";
+    public final static String PROBLEM_JUDGE_RECORD_LIST = "problem:judgerecord:";
 }

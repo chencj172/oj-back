@@ -1,5 +1,5 @@
 ---
-language: C++
+language: cpp
 src_path: main.cpp
 exe_path: main
 compile:
@@ -12,7 +12,7 @@ run:
   env: PATH=/usr/bin:/bin
   command: main
 ---
-language: Java
+language: java
 src_path: Main.java
 exe_path: Main
 compile:

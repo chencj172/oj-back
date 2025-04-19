@@ -1,11 +1,14 @@
 package com.chencj.problem.controller;
 
 
+import com.chencj.api.model.po.JudgeRecord;
 import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
 import com.chencj.common.utils.UserContext;
+import com.chencj.problem.service.JudgeRecordService;
 import com.chencj.problem.service.ProblemService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,10 +20,14 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/problem")
+@Slf4j
 public class ProblemController {
 
     @Resource
     private ProblemService problemService;
+
+    @Resource
+    private JudgeRecordService judgeRecordService;
 
     @GetMapping("/search")
     public Result<?> searchProblem(
@@ -56,5 +63,20 @@ public class ProblemController {
     public Result<?> judgeProblem(@RequestBody ProblemCodeDto problemCodeDto) {
         problemCodeDto.setUid(UserContext.getUser());
         return problemService.judge(problemCodeDto);
+    }
+
+    @GetMapping("/getJudgeRecordList/{pid}")
+    public Result<?> getJudgeRecordList(@PathVariable("pid") Integer pid) {
+        return judgeRecordService.getJudgeRecordList(pid);
+    }
+
+    @GetMapping("/getJudgeRecordDetail/{id}")
+    public Result<?> getJudgeRecordDetail(@PathVariable("id") Integer id) {
+        return judgeRecordService.getJudgeRecordDetail(id);
+    }
+
+    @PostMapping("/saveJudgeRecord")
+    public Result<?> saveJudgeRecord(@RequestBody JudgeRecord judgeRecord) {
+        return judgeRecordService.saveRecord(judgeRecord);
     }
 }

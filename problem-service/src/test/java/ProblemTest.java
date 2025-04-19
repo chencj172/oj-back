@@ -1,3 +1,4 @@
+import cn.hutool.core.bean.BeanUtil;
 import com.chencj.problem.ProblemApplication;
 import com.chencj.problem.model.po.Problem;
 import com.chencj.problem.service.ProblemService;
@@ -93,6 +94,12 @@ public class ProblemTest {
         stringRedisTemplate.opsForValue().set("k1", "v1");
         System.out.println(stringRedisTemplate.opsForValue().get("k1"));
         stringRedisTemplate.delete("k1");
+    }
+
+    @Test
+    public void testBeanToMap() {
+        Problem problem = problemService.getById(222);
+        System.out.println(BeanUtil.beanToMap(problem));
     }
 
 }

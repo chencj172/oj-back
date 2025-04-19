@@ -11,9 +11,9 @@ package com.chencj.common.constant;
 public class StringConstant {
     // 评测相关
     public static final String TESTCASE_STATUS_PADDING = "padding";
-    public static final String TESTCASE_STATUS_OVER = "over";
     public static final String ACCEPTED = "Accepted";
     public static final String FINISHED = "Finished";
+    public static final String WA = "Wrong Answer";
 
 
 }

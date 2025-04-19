@@ -1,7 +1,5 @@
 package com.chencj.user.controller;
 
-
-import cn.hutool.json.JSONObject;
 import com.chencj.common.utils.Result;
 import com.chencj.user.model.dto.UserDto;
 import com.chencj.user.service.UserService;

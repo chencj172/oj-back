@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.judge.service.JudgeService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
  * @Version: 1.0
  */
 @Component
+@Slf4j
 public class CodeConsumer {
 
     @Resource
@@ -23,7 +25,7 @@ public class CodeConsumer {
 
     /**
      * 监听判题的请求
-     * @param code
+     * @param judgeJson
      */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "judge.queue"),
@@ -31,8 +33,9 @@ public class CodeConsumer {
             exchange = @Exchange(name = "judge.direct"),
             key = {"judge"}
     ))
-    public void listenJudge(String code) {
-        // 调用go-judge进行判题
+    public void listenJudge(String judgeJson) {
+        ProblemCodeDto problemCodeDto = JSONUtil.toBean(judgeJson, ProblemCodeDto.class);
+        judgeService.judgeProblem(problemCodeDto);
     }
 
     /**
@@ -42,7 +45,7 @@ public class CodeConsumer {
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "testcase.queue"),
             arguments = @Argument(name = "x-queue-mode", value = "lazy"),
-            exchange = @Exchange(name = "testcase.direct"),
+            exchange = @Exchange(name = "judge.direct"),
             key = {"testcase"}
     ))
     public void listenTestCase(String testCaseJson) {
