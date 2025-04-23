@@ -7,19 +7,30 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chencj.api.model.po.JudgeRecord;
 import com.chencj.common.constant.RedisConstant;
+import com.chencj.common.constant.StringConstant;
 import com.chencj.common.utils.Result;
 import com.chencj.common.utils.UserContext;
 import com.chencj.problem.mapper.JudgeRecordMapper;
+import com.chencj.problem.model.po.Problem;
+import com.chencj.problem.model.po.UserAcproblem;
 import com.chencj.problem.model.vo.JudgeRecordListVO;
 import com.chencj.problem.model.vo.JudgeRecordVO;
 import com.chencj.problem.service.JudgeRecordService;
+import com.chencj.problem.service.ProblemService;
+import com.chencj.problem.service.UserAcproblemService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,8 +47,18 @@ public class JudgeRecordServiceImpl extends ServiceImpl<JudgeRecordMapper, Judge
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private ProblemService problemService;
+
+    @Resource
+    private UserAcproblemService userAcproblemService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     /**
      * 获取评测记录列表
+     *
      * @param pid
      * @return
      */
@@ -59,7 +80,7 @@ public class JudgeRecordServiceImpl extends ServiceImpl<JudgeRecordMapper, Judge
                 .eq(JudgeRecord::getUid, UserContext.getUser())
                 .eq(JudgeRecord::getPid, pid)
                 .list();
-        if(judgeRecordList.isEmpty()) {
+        if (judgeRecordList.isEmpty()) {
             return Result.ok(Collections.emptyList());
         }
 
@@ -74,6 +95,7 @@ public class JudgeRecordServiceImpl extends ServiceImpl<JudgeRecordMapper, Judge
 
     /**
      * 获取评测详情
+     *
      * @param id
      * @return
      */
@@ -93,18 +115,55 @@ public class JudgeRecordServiceImpl extends ServiceImpl<JudgeRecordMapper, Judge
         return Result.ok(judgeRecord);
     }
 
+    /**
+     * 保存评测记录，并且手动管理事务
+     * @param judgeRecord
+     * @return
+     */
     @Override
     public Result<?> saveRecord(JudgeRecord judgeRecord) {
-        // 更新数据库
-        save(judgeRecord);
+        transactionTemplate.execute(status -> {
+            try {
+                // 更新数据库相关信息
+                save(judgeRecord);
+                Problem problem = problemService.getById(judgeRecord.getPid());
 
-        // 再看要不要更新Redis中的记录列表
-        String keyRecord = RedisConstant.PROBLEM_JUDGE_RECORD_LIST + judgeRecord.getUid() + ":" + judgeRecord.getPid();
-        if (stringRedisTemplate.hasKey(keyRecord)) {
-            // 存在就新插入一条评测记录
-            JudgeRecordVO judgeRecordVO = BeanUtil.copyProperties(judgeRecord, JudgeRecordVO.class);
-            stringRedisTemplate.opsForList().leftPush(keyRecord, JSONUtil.toJsonStr(judgeRecordVO));
-        }
+                int num = (StringConstant.ACCEPTED.equals(judgeRecord.getJudgeResult()) ? 1 : 0);
+
+                // 更新
+                problemService.lambdaUpdate()
+                        .set(Problem::getSubmitNum, problem.getSubmitNum() + 1)
+                        .set(Problem::getAcceptNum, problem.getAcceptNum() + num)
+                        .eq(Problem::getId, judgeRecord.getPid())
+                        .update();
+
+                // 更新用户通过列表
+                Long count = userAcproblemService.lambdaQuery()
+                        .eq(UserAcproblem::getUid, judgeRecord.getUid())
+                        .eq(UserAcproblem::getPid, judgeRecord.getPid())
+                        .count();
+
+                if (count != null && count == 0 && num == 1) {
+                    // 更新数据库
+                    userAcproblemService.save(new UserAcproblem(null, judgeRecord.getUid(), judgeRecord.getPid(), 1));
+                    // 删除Redis中的用户通过列表
+                    // String keyUserAcList = RedisConstant.USER_AC_PROBLEM_LIST + judgeRecord.getUid();
+                    // stringRedisTemplate.delete(keyUserAcList);
+                } else if (count != null && count == 0) {
+                    userAcproblemService.save(new UserAcproblem(null, judgeRecord.getUid(), judgeRecord.getPid(), 0));
+                }
+                // 删除Redis中的记录列表
+                String keyRecord = RedisConstant.PROBLEM_JUDGE_RECORD_LIST + judgeRecord.getUid() + ":" + judgeRecord.getPid();
+                stringRedisTemplate.delete(keyRecord);
+
+            } catch (Exception e) {
+                // 异常回滚
+                log.error("保存信息异常: {}", e.getMessage());
+                status.setRollbackOnly();
+            }
+            return null;
+        });
+
         return Result.ok();
     }
 }

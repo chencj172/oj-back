@@ -19,12 +19,27 @@ public class CodePublisher {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * 将消息发送到判题队列
+     * @param msg
+     */
     public void publishJudgeCodeToQueue(String msg) {
         rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.CODE_ROUTING_KEY, msg);
     }
 
+    /**
+     * 将消息发送到测试队列
+     * @param msg
+     */
     public void publishTestCodeToQueue(String msg) {
         rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.TESTCASE_CODE_ROUTING_KEY, msg);
     }
 
+    /**
+     * 将消息发送到每日一题判题队列
+     * @param msg
+     */
+    public void publishDailyProblemCodeToQueue(String msg) {
+        rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.DAILY_PROBLEM_CODE_ROUTING_KEY, msg);
+    }
 }

@@ -8,5 +8,5 @@ import com.chencj.problem.model.po.Problem;
 import com.chencj.problem.model.vo.ProblemVo;
 
 public interface ProblemMapper extends BaseMapper<Problem> {
-    IPage<ProblemVo> search(Page<ProblemVo> page, Integer level, String word);
+    IPage<ProblemVo> search(Page<ProblemVo> page, Integer level, String word, Integer uid);
 }

@@ -52,7 +52,7 @@ public class JudgeService {
      * 判题
      * @param problemCodeDto
      */
-    public void judgeProblem(ProblemCodeDto problemCodeDto) {
+    public JudgeRecord judgeProblem(ProblemCodeDto problemCodeDto) {
         // 用于更新判题的状态
         String Key = RedisConstant.PROBLEM_JUDGE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
         stringRedisTemplate.opsForHash().put(Key, "status", StringConstant.TESTCASE_STATUS_PADDING);
@@ -61,16 +61,15 @@ public class JudgeService {
         boolean lock = simpleRedisLock.tryLock(1);
         if(!lock) {
             // 没拿到锁不允许判题，直接返回
-            return ;
+            return null;
         }
-
+        JudgeRecord judgeRecord = new JudgeRecord();
         try {
             // 先编译
             LanguageConfig languageConfig = languageConfigLoader.getLanguageConfigByName(problemCodeDto.getLanguage());
             JSONArray compile = Compile.compileCode(languageConfig, problemCodeDto.getCode());
             JSONObject compileResult = (JSONObject) compile.get(0);
             String status = compileResult.getStr("status");
-            JudgeRecord judgeRecord = new JudgeRecord();
             judgeRecord.setUid(problemCodeDto.getUid());
             judgeRecord.setPid(problemCodeDto.getPid());
             judgeRecord.setCode(problemCodeDto.getCode());
@@ -93,8 +92,10 @@ public class JudgeService {
             // 放到线程池里面去执行更新操作
             threadPool.execute(new UpdateJudgeRecord(judgeRecord, stringRedisTemplate, problemClient));
 
+            return judgeRecord;
         } catch (Exception e) {
             log.error("{}", e.getMessage());
+            return null;
         } finally {
             simpleRedisLock.unLock();
         }

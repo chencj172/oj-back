@@ -17,4 +17,6 @@ public class ProblemVo {
     private Integer level;
     private Integer submitNum;
     private Integer acceptNum;
+    // 0表示正在尝试 1表示通过
+    private Integer status;
 }

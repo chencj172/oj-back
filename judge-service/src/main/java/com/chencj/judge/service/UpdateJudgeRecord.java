@@ -47,6 +47,5 @@ public class UpdateJudgeRecord implements Runnable {
 
         // 远程调用更新数据库、redis
         problemClient.saveJudge(judgeRecord);
-
     }
 }

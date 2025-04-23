@@ -12,8 +12,6 @@ public class RabbitMQConstant {
     // 判题交换机
     public final static String CODE_EXCHANGE = "judge.direct";
     public final static String CODE_ROUTING_KEY = "judge";
-
-    // 运行测试样例交换机
-    public final static String TESTCASE_CODE_EXCHANGE = "testcase.direct";
     public final static String TESTCASE_CODE_ROUTING_KEY = "testcase";
+    public final static String DAILY_PROBLEM_CODE_ROUTING_KEY = "dailyjudge";
 }

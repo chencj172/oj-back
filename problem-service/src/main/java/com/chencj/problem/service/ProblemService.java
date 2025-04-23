@@ -13,7 +13,7 @@ import com.chencj.problem.model.po.Problem;
  * @Version: 1.0
  */
 public interface ProblemService extends IService<Problem> {
-    Result<?> search(Integer level, String word, Integer pageNum, Integer pageSize);
+    Result<?> search(String token, Integer level, String word, Integer pageNum, Integer pageSize);
 
     Result<?> getProblemById(Integer id);
 

@@ -1,11 +1,20 @@
 import cn.hutool.core.bean.BeanUtil;
 import com.chencj.problem.ProblemApplication;
+import com.chencj.problem.model.po.DailyProblem;
 import com.chencj.problem.model.po.Problem;
+import com.chencj.problem.service.DailyProblemService;
 import com.chencj.problem.service.ProblemService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 /**
  * @ClassName: ProblemTest
@@ -100,6 +109,30 @@ public class ProblemTest {
     public void testBeanToMap() {
         Problem problem = problemService.getById(222);
         System.out.println(BeanUtil.beanToMap(problem));
+    }
+
+    @Test
+    public void testList() {
+        List<Integer> ints = List.of(1, 2, 3, 4, 5);
+        System.out.println(ints);
+        System.out.println(String.valueOf(ints));
+    }
+
+    @Resource
+    private DailyProblemService dailyProblemService;
+    @Test
+    public void testQueryDate() {
+        ZoneId zoneId = ZoneId.of("Asia/Shanghai");
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), zoneId);
+
+        // 获取当月第一天和最后一天
+        LocalDateTime firstDay = dateTime.with(TemporalAdjusters.firstDayOfMonth())
+                .with(LocalTime.MIN); // 当月第一天 00:00:00
+        LocalDateTime lastDay = dateTime.with(TemporalAdjusters.lastDayOfMonth())
+                .with(LocalTime.MAX); // 当月最后一天 23:59:59.999
+
+        // 题目集合
+        List<DailyProblem> list = dailyProblemService.lambdaQuery().between(DailyProblem::getCreateTime, firstDay, lastDay).list();
     }
 
 }

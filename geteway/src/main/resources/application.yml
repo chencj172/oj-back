@@ -13,7 +13,7 @@ spring:
         - id: problem-service
           uri: lb://problem-service
           predicates:
-            - Path=/problem/**
+            - Path=/problem/**, /sign/**
         - id: judge-service
           uri: lb://judge-service
           predicates:

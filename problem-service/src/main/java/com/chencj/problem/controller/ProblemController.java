@@ -7,7 +7,9 @@ import com.chencj.common.utils.Result;
 import com.chencj.common.utils.UserContext;
 import com.chencj.problem.service.JudgeRecordService;
 import com.chencj.problem.service.ProblemService;
+import com.chencj.problem.service.UserAcproblemService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,11 +33,13 @@ public class ProblemController {
 
     @GetMapping("/search")
     public Result<?> searchProblem(
+            HttpServletRequest request,
             @RequestParam(value = "level", required = false) Integer level,
             @RequestParam(value = "word", required = false) String word,
             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize) {
-        return problemService.search(level, word, pageNum, pageSize);
+        log.info("token : {}", request.getHeader("token"));
+        return problemService.search(request.getHeader("token"), level, word, pageNum, pageSize);
     }
 
     @GetMapping("/getById/{id}")
@@ -79,4 +83,5 @@ public class ProblemController {
     public Result<?> saveJudgeRecord(@RequestBody JudgeRecord judgeRecord) {
         return judgeRecordService.saveRecord(judgeRecord);
     }
+
 }

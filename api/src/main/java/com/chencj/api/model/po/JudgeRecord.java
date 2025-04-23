@@ -63,5 +63,10 @@ public class JudgeRecord implements Serializable {
      */
     private Integer runTime;
 
+    /**
+     * 程序运行占用空间 kb
+     */
+    private Integer runMemory;
+
     private static final long serialVersionUID = 1L;
 }

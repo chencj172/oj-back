@@ -3,16 +3,19 @@
 <mapper namespace="com.chencj.problem.mapper.ProblemMapper">
 
     <select id="search" resultType="com.chencj.problem.model.vo.ProblemVo">
-        SELECT id, title, level, submit_num, accept_num FROM problem
+        SELECT problem.id, title, level, submit_num, accept_num, status
+        FROM problem
+        LEFT JOIN user_acproblem AS ac
+        ON ac.uid = #{uid} AND ac.pid = problem.id
         <where>
             <if test="word != null and word.trim() != ''">
-                AND title like CONCAT('%', #{word}, '%')
+                AND problem.title like CONCAT('%', #{word}, '%')
             </if>
             <if test="level != null">
-                AND level = #{level}
+                AND problem.level = #{level}
             </if>
         </where>
-        ORDER BY id ASC
+        ORDER BY problem.id ASC
 
     </select>
 </mapper>

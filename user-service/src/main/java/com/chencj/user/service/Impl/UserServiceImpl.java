@@ -131,6 +131,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(res == null) {
             return Result.error(401, "token失效");
         }
-        return Result.ok();
+        return Result.ok(res);
     }
 }

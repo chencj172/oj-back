@@ -90,4 +90,13 @@ public class JudgeTest {
         System.out.println(range);
     }
 
+    @Test
+    public void testString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        String date = "202502";
+        stringBuilder.append(date,0 , 6);
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        System.out.println(stringBuilder);
+    }
+
 }

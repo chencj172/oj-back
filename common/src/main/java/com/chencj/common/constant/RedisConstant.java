@@ -11,6 +11,8 @@ package com.chencj.common.constant;
 public class RedisConstant {
     // 用户相关
     public final static String USER_INFO = "user:info:";
+    public final static String USER_AC_PROBLEM_LIST = "user:aclist:";
+    public final static String USER_SIGNIN = "user:sign:";
 
     // 题目相关
     public final static String PROBLEM_INFO_DETAIL = "problem:info:";

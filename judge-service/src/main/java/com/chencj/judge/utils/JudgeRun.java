@@ -96,6 +96,7 @@ public class JudgeRun {
         }
 
         long maxRunTime = 0;
+        long maxMemory = 0;
         for (int i = 0; i < inputList.size(); i++) {
             String inputStr = inputList.get(i);
             String outputStr = outputList.get(i);
@@ -114,6 +115,7 @@ public class JudgeRun {
             JSONObject runObj = (JSONObject) run.get(0);
             String runStatus = runObj.getStr("status");
             maxRunTime = Math.max(maxRunTime, Long.parseLong(runObj.getStr("runTime")) / 1000000);
+            maxMemory = Math.max(maxMemory, Long.parseLong(runObj.getStr("memory")) / 1024);
             if (!StringConstant.ACCEPTED.equals(runStatus)) {
                 // 运行出错
                 judgeRecord.setJudgeResult(runStatus);
@@ -135,6 +137,7 @@ public class JudgeRun {
 
         // AC
         judgeRecord.setRunTime((int) maxRunTime);
+        judgeRecord.setRunMemory((int) maxMemory);
         judgeRecord.setJudgeResult(StringConstant.ACCEPTED);
     }
 

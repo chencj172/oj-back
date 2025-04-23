@@ -1,6 +1,5 @@
 package com.chencj.api.client;
 
-import com.chencj.api.model.po.JudgeRecord;
 import com.chencj.common.utils.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,17 +8,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
- * @ClassName: ProblemClient
+ * @ClassName: UserClient
  * @Description:
  * @Author: chencj
- * @Datetime: 2025/4/19 15:53
+ * @Datetime: 2025/4/22 11:47
  * @Version: 1.0
  */
-@FeignClient("problem-service")
-public interface ProblemClient {
-    @PostMapping("/problem/saveJudgeRecord")
-    void saveJudge(JudgeRecord judgeRecord);
-
-    @PutMapping("/sign/{uid}/{pid}")
-    Result<?> signIn(@PathVariable("uid") Integer uid, @PathVariable("pid") Integer pid);
+@FeignClient("user-service")
+public interface UserClient {
+    @PostMapping("/user/checkLogin")
+    Result<?> checkLogin(@RequestHeader(value = "token") String token);
 }

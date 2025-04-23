@@ -60,4 +60,10 @@ public class ProblemCodeDto {
      * 题目的栈空间限制 mb
      */
     private Integer stackLimit;
+
+    /**
+     * 1 表示普通判题
+     * 2 表示每日一题判题
+     */
+    private Integer origin;
 }

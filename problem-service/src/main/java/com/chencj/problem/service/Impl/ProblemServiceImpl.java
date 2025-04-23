@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chencj.api.client.UserClient;
 import com.chencj.common.constant.RedisConstant;
 import com.chencj.common.constant.StringConstant;
 import com.chencj.common.model.ProblemCodeDto;
@@ -14,6 +15,7 @@ import com.chencj.problem.model.vo.ProblemVo;
 import com.chencj.problem.publisher.CodePublisher;
 import com.chencj.problem.service.ProblemService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @Version: 1.0
  */
 @Service
+@Slf4j
 public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> implements ProblemService {
 
     @Resource
@@ -38,10 +41,17 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
     @Resource
     private CodePublisher codePublisher;
 
+    @Resource
+    private UserClient userClient;
+
+
     @Override
-    public Result<?> search(Integer level, String word, Integer pageNum, Integer pageSize) {
+    public Result<?> search(String token, Integer level, String word, Integer pageNum, Integer pageSize) {
         Page<ProblemVo>page = new Page<>(pageNum, pageSize);
-        problemMapper.search(page, level, word);
+        Result<?> ret = userClient.checkLogin(token);
+        Integer uid = null;
+        if(ret.getCode() == 200) uid = (int) ret.getData();
+        problemMapper.search(page, level, word, uid);
         return Result.ok(page);
     }
 
@@ -67,8 +77,16 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
         // 如果之前有遗留的清除一下
         stringRedisTemplate.delete(Key);
         stringRedisTemplate.opsForHash().put(Key, "status", StringConstant.TESTCASE_STATUS_PADDING);
-        // 把信息传到消息队列中
-        codePublisher.publishJudgeCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
+        // 把信息传到对应的消息队列中
+        switch (problemCodeDto.getOrigin()) {
+            case 2:
+                codePublisher.publishDailyProblemCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
+                break;
+            case 1:
+            default:
+                codePublisher.publishJudgeCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
+        }
+
         return Result.ok();
     }
 
