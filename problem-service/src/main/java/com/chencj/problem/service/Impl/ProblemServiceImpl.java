@@ -72,7 +72,7 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
 
     @Override
     public Result<?> judge(ProblemCodeDto problemCodeDto) {
-        // 生成一条记录评测转态的数据放到Redis里，待判题结束将判题结果返回给用户并且存到数据库中，并且查看是否要更新Redis
+        // 生成一条记录评测状态的数据放到Redis里，待判题结束将判题结果返回给用户并且存到数据库中，并且查看是否要更新Redis
         String Key = RedisConstant.PROBLEM_JUDGE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
         // 如果之前有遗留的清除一下
         stringRedisTemplate.delete(Key);

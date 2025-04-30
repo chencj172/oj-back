@@ -6,6 +6,7 @@ import com.chencj.problem.service.DailyProblemService;
 import com.chencj.problem.service.SignInService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,8 @@ public class SignInController {
      * @return
      */
     @GetMapping("/getUserSign/{date}")
-    public Result<?> getUserSign(@PathVariable("date") String date) {
+    public Result<?> getUserSign(@PathVariable("date") String date, HttpServletResponse response) {
+        response.setHeader("Connection", "keep-alive");
         return signInService.getUserSign(date);
     }
 
@@ -48,7 +50,8 @@ public class SignInController {
      * @return
      */
     @GetMapping("/getProblemOfMonth/{timeStamp}")
-    public Result<?> getProblemOfMonth(@PathVariable("timeStamp") String timeStamp) {
+    public Result<?> getProblemOfMonth(@PathVariable("timeStamp") String timeStamp, HttpServletResponse response) {
+        response.setHeader("Connection", "keep-alive");
         return dailyProblemService.getProblemOfMonth(Long.valueOf(timeStamp));
     }
 

@@ -20,4 +20,9 @@ public class RedisConstant {
     public final static String PROBLEM_JUDGE = "problem:judge:";
     public final static String PROBLEM_JUDGE_DETAIL = "problem:judge:detail:";
     public final static String PROBLEM_JUDGE_RECORD_LIST = "problem:judgerecord:";
+    public final static String DAILY_PROBLEM_OF_MONTH = "problem:dailylist:";
+
+    // 挑战相关
+    public final static String CHALLENGE_RECORD = "challenge:record:";
+    public final static String OTHER_SIDE = "otherside";
 }

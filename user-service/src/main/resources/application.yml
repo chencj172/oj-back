@@ -1,7 +1,6 @@
 server:
   port: 8081
 
-
 oj:
   swagger:
     title: 用户服务接口文档

@@ -43,7 +43,7 @@ public class CreateDailyProblem {
 
     private Integer selectDailyProblem() {
         // 随机选择
-        long total = dailyProblemService.count();
+        long total = problemService.count();
         Random rand = new Random(System.currentTimeMillis()); // 使用日期作为随机种子
         int pid = 204 + rand.nextInt((int) total);
 

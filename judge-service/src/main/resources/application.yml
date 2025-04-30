@@ -1,6 +1,5 @@
 server:
   port: 8083
-
 oj:
   swagger:
     title: 判题服务接口文档

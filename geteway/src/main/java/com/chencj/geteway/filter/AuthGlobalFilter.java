@@ -4,9 +4,11 @@ import com.chencj.geteway.config.AuthProperties;
 import com.chencj.geteway.exception.UnauthorizedException;
 import com.chencj.geteway.utils.JwtTool;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -24,6 +26,7 @@ import java.util.List;
  * @Datetime: 2025/3/15 10:32
  * @Version: 1.0
  */
+@Slf4j
 @Component
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 

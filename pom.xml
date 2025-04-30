@@ -28,6 +28,7 @@
         <module>problem-service</module>
         <module>judge-service</module>
         <module>api</module>
+        <module>pk-service</module>
     </modules>
     <scm>
         <connection/>

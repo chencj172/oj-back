@@ -1,0 +1,12 @@
+server:
+  port: 8084
+oj:
+  swagger:
+    title: pk服务接口文档
+    describe: pk服务接口文档
+    package: com.chencj.pk.controller
+logging:
+  level:
+    com.chencj.pk: debug
+
+

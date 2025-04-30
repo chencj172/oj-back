@@ -7,11 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="user-service" />
         <module name="problem-service" />
         <module name="judge-service" />
-        <module name="api" />
         <module name="common" />
+        <module name="pk-service" />
+        <module name="user-service" />
+        <module name="api" />
         <module name="geteway" />
       </profile>
     </annotationProcessing>
@@ -23,6 +24,7 @@
       <module name="geteway" options="-parameters" />
       <module name="judge-service" options="-parameters" />
       <module name="oj" options="" />
+      <module name="pk-service" options="-parameters" />
       <module name="problem-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

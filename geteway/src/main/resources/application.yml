@@ -18,6 +18,10 @@ spring:
           uri: lb://judge-service
           predicates:
             - Path=/judge/**
+        - id: pk-service
+          uri: lb://pk-service
+          predicates:
+            - Path=/pk/**
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
@@ -42,4 +46,4 @@ auth:
     - /user/checkLogin
     - /problem/search
     - /problem/getById/{id}
-
+    - /pk/challenge

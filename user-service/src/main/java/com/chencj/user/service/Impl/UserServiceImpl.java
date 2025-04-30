@@ -66,6 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         String token = jwtTool.createToken(user.getId());
+        
         return Result.ok(token, "登陆成功");
     }
 

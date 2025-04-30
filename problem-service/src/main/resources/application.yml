@@ -1,6 +1,8 @@
 server:
   port: 8082
-
+  tomcat:
+    # http长连接时间为30s，默认为60s
+    keep-alive-timeout: 30000
 oj:
   swagger:
     title: 题目服务接口文档
@@ -9,6 +11,7 @@ oj:
 logging:
   level:
     com.chencj.problem: debug
+    org.apache.tomcat: debug
 
 # pagehelper分页插件配置
 pagehelper:

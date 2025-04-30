@@ -3,7 +3,7 @@ package com.chencj.judge.utils;
 
 /**
  * @ClassName: OJComparator
- * @Description:
+ * @Description: 比较程序输出和答案是否一致，自动去掉多余空格以及换行
  * @Author: chencj
  * @Datetime: 2025/4/16 16:29
  * @Version: 1.0
