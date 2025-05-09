@@ -47,10 +47,10 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
 
     @Override
     public Result<?> search(String token, Integer level, String word, Integer pageNum, Integer pageSize) {
-        Page<ProblemVo>page = new Page<>(pageNum, pageSize);
+        Page<ProblemVo> page = new Page<>(pageNum, pageSize);
         Result<?> ret = userClient.checkLogin(token);
         Integer uid = null;
-        if(ret.getCode() == 200) uid = (int) ret.getData();
+        if (ret.getCode() == 200) uid = (int) ret.getData();
         problemMapper.search(page, level, word, uid);
         return Result.ok(page);
     }
@@ -72,7 +72,7 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
 
     @Override
     public Result<?> judge(ProblemCodeDto problemCodeDto) {
-        // 生成一条记录评测状态的数据放到Redis里，待判题结束将判题结果返回给用户并且存到数据库中，并且查看是否要更新Redis
+        // 生成一条记录评测状态的数据放到Redis里，待判题结束将判题结果返回给用户并且存到数据库中
         String Key = RedisConstant.PROBLEM_JUDGE + problemCodeDto.getUid() + ":" + problemCodeDto.getPid();
         // 如果之前有遗留的清除一下
         stringRedisTemplate.delete(Key);
@@ -81,6 +81,9 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
         switch (problemCodeDto.getOrigin()) {
             case 2:
                 codePublisher.publishDailyProblemCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
+                break;
+            case 3:
+                codePublisher.publishPKCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
                 break;
             case 1:
             default:

@@ -24,5 +24,5 @@ public class RedisConstant {
 
     // 挑战相关
     public final static String CHALLENGE_RECORD = "challenge:record:";
-    public final static String OTHER_SIDE = "otherside";
+
 }

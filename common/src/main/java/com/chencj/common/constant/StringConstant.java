@@ -15,5 +15,10 @@ public class StringConstant {
     public static final String FINISHED = "Finished";
     public static final String WA = "Wrong Answer";
 
+    // pk相关
+    public static final String CHALLENGE_RESULT = "challengeresult";
+    public final static String OTHER_SIDE = "otherside";
+    public final static String VICTORY = "victory";
+    public final static String FAILED = "failed";
 
 }

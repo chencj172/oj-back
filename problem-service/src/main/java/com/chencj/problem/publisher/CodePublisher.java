@@ -42,4 +42,12 @@ public class CodePublisher {
     public void publishDailyProblemCodeToQueue(String msg) {
         rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.DAILY_PROBLEM_CODE_ROUTING_KEY, msg);
     }
+
+    /**
+     * 将消息发送到pk队列里面
+     * @param msg
+     */
+    public void publishPKCodeToQueue(String msg) {
+        rabbitTemplate.convertAndSend(RabbitMQConstant.CODE_EXCHANGE, RabbitMQConstant.PK_CODE_ROUTING_KEY, msg);
+    }
 }

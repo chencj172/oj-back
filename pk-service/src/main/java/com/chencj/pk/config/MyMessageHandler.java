@@ -62,12 +62,13 @@ public class MyMessageHandler extends TextWebSocketHandler {
         Object userId = session.getAttributes().get("userId");
         // 从已连接的用户中挑选一个进行挑战，并且在redis生成两条记录
         // key中包含挑战双方的userId，value是一个哈希表，哈希表存储的是对方的userId，题目通过状态，题目第一次通过的时间戳，挑战的结果
-        if(userMap.size() > 1) {
+        if(!userMap.isEmpty()) {
             Map.Entry<Object, WebSocketSession> challengeUser = randomUser();
             recordToRedis(userId, challengeUser.getKey());
             // 通知双方选取的题目Id
-            session.sendMessage(new TextMessage("204"));
-            challengeUser.getValue().sendMessage(new TextMessage("204"));
+            session.sendMessage(new TextMessage("1204"));
+            challengeUser.getValue().sendMessage(new TextMessage("1204"));
+            // 前端对应的要跳转到题目页面，然后关闭socket
         } else {
             // 没有的话就先放到用户在线列表中
             userMap.put(userId, session);
@@ -79,16 +80,22 @@ public class MyMessageHandler extends TextWebSocketHandler {
     private void recordToRedis(Object userId, Object challengeId) {
         String Key1 = RedisConstant.CHALLENGE_RECORD + userId;
         String Key2 = RedisConstant.CHALLENGE_RECORD + challengeId;
+        if(stringRedisTemplate.hasKey(Key1)) {
+            stringRedisTemplate.delete(Key1);
+        }
+        if(stringRedisTemplate.hasKey(Key2)) {
+            stringRedisTemplate.delete(Key2);
+        }
         Map<String, String> map1 = new HashMap<>();
-        map1.put(RedisConstant.OTHER_SIDE, (String) challengeId);
-        map1.put("judgeresult", StringConstant.TESTCASE_STATUS_PADDING);
+        map1.put(StringConstant.OTHER_SIDE, challengeId.toString());
+        // map1.put("judgeresult", StringConstant.TESTCASE_STATUS_PADDING);
         map1.put("timestamp", "");
-        map1.put("challengeresult", StringConstant.TESTCASE_STATUS_PADDING);
+        map1.put(StringConstant.CHALLENGE_RESULT, StringConstant.TESTCASE_STATUS_PADDING);
         Map<String, String> map2 = new HashMap<>();
-        map2.put(RedisConstant.OTHER_SIDE, (String) userId);
-        map2.put("judgeresult", StringConstant.TESTCASE_STATUS_PADDING);
+        map2.put(StringConstant.OTHER_SIDE, userId.toString());
+        // map2.put("judgeresult", StringConstant.TESTCASE_STATUS_PADDING);
         map2.put("timestamp", "");
-        map2.put("challengeresult", StringConstant.TESTCASE_STATUS_PADDING);
+        map2.put(StringConstant.CHALLENGE_RESULT, StringConstant.TESTCASE_STATUS_PADDING);
 
         stringRedisTemplate.opsForHash().putAll(Key1, map1);
         stringRedisTemplate.opsForHash().putAll(Key2, map2);
@@ -105,6 +112,7 @@ public class MyMessageHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // 获得客户端传来的消息
         String payload = message.getPayload();
+        log.info("recv from client : {}", payload);
         session.sendMessage(new TextMessage("server 发送消息 " + payload + " " + LocalDateTime.now()));
     }
 

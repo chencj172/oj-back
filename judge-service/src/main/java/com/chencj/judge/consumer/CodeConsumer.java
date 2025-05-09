@@ -2,6 +2,7 @@ package com.chencj.judge.consumer;
 
 
 import cn.hutool.json.JSONUtil;
+import com.chencj.api.client.PKClient;
 import com.chencj.api.client.ProblemClient;
 import com.chencj.api.client.UserClient;
 import com.chencj.api.model.po.JudgeRecord;
@@ -32,6 +33,9 @@ public class CodeConsumer {
 
     @Resource
     private ProblemClient problemClient;
+
+    @Resource
+    private PKClient pkClient;
 
     /**
      * 监听普通判题的请求
@@ -65,6 +69,25 @@ public class CodeConsumer {
         if(judgeRecord != null && StringConstant.ACCEPTED.equals(judgeRecord.getJudgeResult())) {
             // 保存用户签到结果
             problemClient.signIn(judgeRecord.getUid(), judgeRecord.getPid());
+        }
+    }
+
+    /**
+     * pk的监听队列
+     * @param judgeJson
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "pk.queue"),
+            arguments = @Argument(name = "x-queue-mode", value = "lazy"),
+            exchange = @Exchange(name = "judge.direct"),
+            key = {"PKjudge"}
+    ))
+    public void listenPKJudge(String judgeJson) {
+        ProblemCodeDto problemCodeDto = JSONUtil.toBean(judgeJson, ProblemCodeDto.class);
+        JudgeRecord judgeRecord = judgeService.judgeProblem(problemCodeDto);
+        // 更新pk的redis
+        if(StringConstant.ACCEPTED.equals(judgeRecord.getJudgeResult())) {
+            pkClient.updatePKRecord(judgeRecord);
         }
     }
 

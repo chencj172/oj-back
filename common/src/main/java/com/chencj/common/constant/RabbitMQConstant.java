@@ -14,4 +14,5 @@ public class RabbitMQConstant {
     public final static String CODE_ROUTING_KEY = "judge";
     public final static String TESTCASE_CODE_ROUTING_KEY = "testcase";
     public final static String DAILY_PROBLEM_CODE_ROUTING_KEY = "dailyjudge";
+    public final static String PK_CODE_ROUTING_KEY = "PKjudge";
 }
