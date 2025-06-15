@@ -11,6 +11,7 @@
         <module name="judge-service" />
         <module name="common" />
         <module name="pk-service" />
+        <module name="posts-service" />
         <module name="user-service" />
         <module name="api" />
         <module name="geteway" />
@@ -25,6 +26,7 @@
       <module name="judge-service" options="-parameters" />
       <module name="oj" options="" />
       <module name="pk-service" options="-parameters" />
+      <module name="posts-service" options="-parameters" />
       <module name="problem-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

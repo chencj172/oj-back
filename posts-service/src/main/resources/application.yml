@@ -1,0 +1,21 @@
+server:
+  port: 8085
+  tomcat:
+    # http长连接时间为30s，默认为60s
+    keep-alive-timeout: 30000
+oj:
+  swagger:
+    title: posts服务接口文档
+    describe: posts服务接口文档
+    package: com.chencj.posts.controller
+logging:
+  level:
+    com.chencj.posts: debug
+
+# pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+

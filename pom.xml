@@ -29,6 +29,7 @@
         <module>judge-service</module>
         <module>api</module>
         <module>pk-service</module>
+        <module>posts-service</module>
     </modules>
     <scm>
         <connection/>

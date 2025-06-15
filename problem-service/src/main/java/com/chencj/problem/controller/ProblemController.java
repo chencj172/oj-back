@@ -84,4 +84,9 @@ public class ProblemController {
         return judgeRecordService.saveRecord(judgeRecord);
     }
 
+    @GetMapping("/getAllTag")
+    public Result<?> getAllTag() {
+        return problemService.getAllTag();
+    }
+
 }

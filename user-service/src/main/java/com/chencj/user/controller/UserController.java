@@ -41,4 +41,9 @@ public class UserController {
         return userService.checkLogin(request.getHeader("token"));
     }
 
+    @GetMapping("/getUsername/{id}")
+    public Result<?> getUsername(@PathVariable("id") Integer id) {
+        return userService.getUsername(id);
+    }
+
 }

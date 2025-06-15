@@ -20,4 +20,6 @@ public interface ProblemService extends IService<Problem> {
     Result<?> judge(ProblemCodeDto testCaseCodeDto);
 
     Result<?> testCase(ProblemCodeDto testCaseCodeDto);
+
+    Result<?> getAllTag();
 }

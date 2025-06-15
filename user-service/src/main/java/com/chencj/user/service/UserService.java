@@ -20,4 +20,6 @@ public interface UserService extends IService<User> {
     Result<?> getUserInfo();
 
     Result<?> checkLogin(String token);
+
+    Result<?> getUsername(Integer id);
 }

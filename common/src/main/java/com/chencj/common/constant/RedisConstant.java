@@ -25,4 +25,11 @@ public class RedisConstant {
     // 挑战相关
     public final static String CHALLENGE_RECORD = "challenge:record:";
 
+    // 标签
+    public final static String TAG_INFO = "tag:info";
+
+    // 帖子相关
+    public final static String POSTS_INFO = "posts:info:";
+    public final static String POSTS_VIEW = "posts:view";
+
 }

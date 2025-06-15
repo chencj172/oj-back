@@ -10,7 +10,9 @@ import com.chencj.common.constant.StringConstant;
 import com.chencj.common.model.ProblemCodeDto;
 import com.chencj.common.utils.Result;
 import com.chencj.problem.mapper.ProblemMapper;
+import com.chencj.problem.mapper.TagMapper;
 import com.chencj.problem.model.po.Problem;
+import com.chencj.problem.model.po.Tag;
 import com.chencj.problem.model.vo.ProblemVo;
 import com.chencj.problem.publisher.CodePublisher;
 import com.chencj.problem.service.ProblemService;
@@ -19,7 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static com.chencj.common.constant.RedisConstant.TAG_INFO;
 
 /**
  * @ClassName: ProblemService
@@ -43,6 +52,9 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
 
     @Resource
     private UserClient userClient;
+
+    @Resource
+    private TagMapper tagMapper;
 
 
     @Override
@@ -104,6 +116,25 @@ public class ProblemServiceImpl extends ServiceImpl<ProblemMapper, Problem> impl
         // 将评测用例相关信息放到消息队列中
         codePublisher.publishTestCodeToQueue(JSONUtil.toJsonStr(problemCodeDto));
         return Result.ok();
+    }
+
+    @Override
+    public Result<?> getAllTag() {
+        List<String> tags;
+        if (stringRedisTemplate.hasKey(TAG_INFO)) {
+            Map<Object, Object> tagMap = stringRedisTemplate.opsForHash().entries(TAG_INFO);
+            tags = tagMap.values().stream().map((tag) -> (String) tag).toList();
+        } else {
+            tags = new ArrayList<>();
+            List<Tag> allTag = tagMapper.getAllTag();
+            Map<String, String> tagMap = new HashMap<>();
+            for(Tag tag : allTag) {
+                tags.add(tag.getTagName());
+                tagMap.put(tag.getId().toString(), tag.getTagName());
+            }
+            stringRedisTemplate.opsForHash().putAll(TAG_INFO, tagMap);
+        }
+        return Result.ok(tags);
     }
 
 }

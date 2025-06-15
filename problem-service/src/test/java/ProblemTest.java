@@ -135,4 +135,9 @@ public class ProblemTest {
         List<DailyProblem> list = dailyProblemService.lambdaQuery().between(DailyProblem::getCreateTime, firstDay, lastDay).list();
     }
 
+    @Test
+    public void testNull() {
+        stringRedisTemplate.opsForHash().increment("test", "1", 1L);
+    }
+
 }

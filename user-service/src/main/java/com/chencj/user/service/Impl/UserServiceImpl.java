@@ -134,4 +134,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return Result.ok(res);
     }
+
+    @Override
+    public Result<?> getUsername(Integer id) {
+        // 先看redis中有没有，没有的话从数据库中拿
+        String Key = RedisConstant.USER_INFO + id;
+        String username = null;
+        if (stringRedisTemplate.hasKey(Key)) {
+            String user_info_str = stringRedisTemplate.opsForValue().get(Key);
+            UserVo userVo = JSONUtil.toBean(user_info_str, UserVo.class);
+            username = userVo.getUserName();
+        } else {
+            User user = getById(id);
+            username = user.getUserName();
+        }
+        return Result.ok(username);
+    }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chencj.posts.mapper.PostsMapper">
+  <resultMap id="BaseResultMap" type="com.chencj.posts.model.po.Posts">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="views" jdbcType="INTEGER" property="views" />
+    <result column="comments" jdbcType="INTEGER" property="comments" />
+    <result column="likes" jdbcType="INTEGER" property="likes" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+</mapper>
