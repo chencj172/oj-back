@@ -31,5 +31,6 @@ public class RedisConstant {
     // 帖子相关
     public final static String POSTS_INFO = "posts:info:";
     public final static String POSTS_VIEW = "posts:view";
+    public final static String POSTS_COMMENT = "posts:comment:";
 
 }
